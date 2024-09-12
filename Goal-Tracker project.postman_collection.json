@@ -1,0 +1,667 @@
+{
+	"info": {
+		"_postman_id": "d130f324-dba9-47db-9d0a-3a23cf4809a9",
+		"name": "Goal-Tracker project",
+		"description": "it's a project for learning API on Postman through a Udemy course by Gianni Bruno",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31408702"
+	},
+	"item": [
+		{
+			"name": "STATUS",
+			"item": [
+				{
+					"name": "Read Status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate the Status code is 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response\", () => {\r",
+									"    pm.expect(pm.response.json().status).to.exist;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Validate response - enhanced\", () => {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.status).to.exist;\r",
+									"    pm.expect(response.status).to.eq(\"OPERATIONAL\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type header is set to application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"status"
+							]
+						},
+						"description": "### GET /status\n\nThis endpoint retrieves the status information.\n\n#### Request Body\n\nThis request does not require a request body.\n\n#### Response\n\nThe response for this request is in JSON format and has the following schema:\n\n``` json\n{\n  \"status\": \"string\"\n}\n\n ```\n\nThe `status` field in the response represents the status information."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "Valid Register user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response and status code\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,400]);\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    if (pm.response.code === 201){\r",
+									"        \r",
+									"        pm.expect(responseData).to.be.an('object');\r",
+									"        pm.expect(responseData.user).to.exist;\r",
+									"        pm.expect(responseData.user.name).to.exist;\r",
+									"        pm.expect(responseData.user.email).to.exist;\r",
+									"\r",
+									"    } else{\r",
+									"\r",
+									"        pm.expect(responseData.msg).to.exist.and.to.satisfy((msg) =>{\r",
+									"            return msg.includes(\"Email address already exists\") || msg.includes(\"Please provide a name, email address and password\");\r",
+									"        });\r",
+									"        \r",
+									"       \r",
+									"    }\r",
+									"    \r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"kimo\",\r\n    \"email\": \"kimo1221@example.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Valid Login user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseBody = pm.response.json();\r",
+									"pm.collectionVariables.set(\"token\", responseBody.token);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"karim@example.com\",\r\n    \"password\": \"Password123!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{$randomFullName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/updateprofile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"updateprofile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GOALS",
+			"item": [
+				{
+					"name": "Create Goal",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Enroll on 'Udemy API Course'\",\r\n    \"description\": \"Enroll on 'Udemy API Course' and create a 'Progress Chart' to track progress.\",\r\n    \"priority\": \"high\",\r\n    \"status\": \"to-do\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/goals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dynamic Variables",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let random_GoalTitle = pm.variables.replaceIn(\"{{$randomLoremSentence}}\");\r",
+									"\r",
+									"let random_GoalDescription = pm.variables.replaceIn(\"{{$randomLoremSentences}}\");\r",
+									"\r",
+									"pm.collectionVariables.set(\"random_GoalTitle\", random_GoalTitle);\r",
+									"pm.collectionVariables.set(\"random_GoalDescription\", random_GoalDescription);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate 'Title' & 'Description' properties within the response\", () => {\r",
+									"    \r",
+									"   var responseData = pm.response.json().goal;\r",
+									"   pm.expect(responseData.title).to.eq(pm.collectionVariables.get('random_GoalTitle'));\r",
+									"   pm.expect(responseData.description).to.eq(pm.collectionVariables.get('random_GoalDescription'));\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response status code is 201\", () => {\r",
+									" pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"{{random_GoalTitle}}\",\r\n    \"description\": \"{{random_GoalDescription}}\",\r\n    \"priority\": \"medium\",\r\n    \"status\": \"to-do\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/goals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Goals",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Filer and log the titles and description of goals\", () => {\r",
+									"   \r",
+									"   let isGoalInResponse = false;\r",
+									"   responseData.goals.forEach((goal) =>{\r",
+									"     if (goal.title.includes(pm.collectionVariables.get('random_GoalTitle')) && goal.description.includes(pm.collectionVariables.get('random_GoalDescription'))){\r",
+									"        isGoalInResponse = true;\r",
+									"     }\r",
+									"   })\r",
+									"   pm.expect(isGoalInResponse).to.be.true;\r",
+									"});\r",
+									"\r",
+									"//Store all goals id's in array\r",
+									"const goalIds = [];\r",
+									"responseData.goals.forEach((goal)=>{\r",
+									"    goalIds.push(goal._id);\r",
+									"})\r",
+									"\r",
+									"//Store all goal Id's as a collection variable\r",
+									"pm.collectionVariables.set(\"goalIds\", JSON.stringify(goalIds));\r",
+									"\r",
+									"//Generate a random index to access a random goal id from the array\r",
+									"const randomIndex = Math.floor(Math.random() * goalIds.length);\r",
+									"\r",
+									"//Log a random selected Goal Id\r",
+									"console.log(\"Random selected goal id: \" + goalIds[randomIndex]);\r",
+									"\r",
+									"//Store random goal id as a collection variable\r",
+									"pm.collectionVariables.set(\"goalId\", goalIds[randomIndex]);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/goals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Goal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/goals/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{goalId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Goal",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"in-progress\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/goals/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{goalId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Goal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/goals/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{goalId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/goals/showprogress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"goals",
+								"showprogress"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://goal-tracker-api.onrender.com/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "random_GoalTitle",
+			"value": ""
+		},
+		{
+			"key": "random_GoalDescription",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "goalId",
+			"value": ""
+		},
+		{
+			"key": "goalIds",
+			"value": ""
+		}
+	]
+}
